@@ -93,3 +93,109 @@ def evaluate_round(
             outcome = "패배했습니다. 짝/홀 모두 틀리셨습니다."
 
     return outcome, net_gain
+
+def play_game():
+
+    line1 = "=== 짝/홀 & 숫자 맞추기 도박 게임 ==="
+    print(line1)
+
+    line2 = "처음 참가자에게 1,000,000원을 지급합니다."
+    print(line2)
+
+    part1 = "짝수/홀수만 맞추면 배당률 "
+    part2 = str(PARITY_PAYOUT)
+    part3 = ":1, "
+    part4 = "숫자까지 정확히 맞추면 배당률 "
+    part5 = str(EXACT_PAYOUT)
+    part6 = ":1 입니다.\n"
+    full_info = part1 + part2 + part3 + part4 + part5 + part6
+    print(full_info)
+
+    balance = 1_000_000
+    initial_balance = balance
+    admin_profit = 0
+
+    while True:
+
+        player_number, bet_amount = get_player_choice(
+            balance
+        )
+
+        lower_bound = MIN_NUMBER
+        upper_bound = MAX_NUMBER
+        computer_number = random.randint(
+            lower_bound,
+            upper_bound
+        )
+
+        print("\n컴퓨터가 뽑은 숫자: ")
+        print(computer_number)
+
+        outcome, net_gain = evaluate_round(
+            player_number,
+            bet_amount,
+            computer_number
+        )
+
+        balance = balance + net_gain
+        admin_profit = admin_profit - net_gain
+
+        if net_gain > 0:
+
+            print(outcome)
+            print("→ 베팅 ", end="")
+            print(f"{bet_amount:.0f}", end="")
+            print("원, 순수익 ", end="")
+            print(f"{net_gain:.0f}", end="")
+            print("원 획득")
+
+        elif net_gain == 0:
+
+            print(outcome)
+            print("→ 베팅 ", end="")
+            print(f"{bet_amount:.0f}", end="")
+            print("원, 순수익 0원 (원금 유지)")
+
+        else:
+
+            print(outcome)
+            print("→ 베팅 ", end="")
+            print(f"{bet_amount:.0f}", end="")
+            print("원 전액 손실")
+
+        print("현재 잔액: ")
+        print(f"{balance:.0f}")
+        print("원\n")
+
+        if balance <= 0:
+
+            print("You lose")
+            break
+
+        cont_prompt = "한 판 더 하시겠습니까? (y/n): "
+        cont_input = input(cont_prompt)
+        cont = cont_input.strip().lower()
+
+        if cont != "y":
+            break
+
+    player_profit = balance - initial_balance
+
+    print("\n=== 게임 종료 ===")
+    print("플레이어 최종 잔액: ")
+    print(f"{balance:.0f}")
+    print("원")
+    print("플레이어 수익/손실: ")
+    print(f"{player_profit:+,.0f}")
+    print("원")
+    print("관리자 수익/손실: ")
+    print(f"{admin_profit:+,.0f}")
+    print("원")
+    print("즐거운 시간 되셨길 바랍니다!")
+
+
+
+
+if __name__ == "__main__":
+
+    play_game()
