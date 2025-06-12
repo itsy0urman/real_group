@@ -59,3 +59,37 @@ def get_player_choice(
             msg5 = "잔액 이하의 양수 금액을 입력하세요.\n"
             error_message = msg1 + msg2 + msg3 + msg4 + msg5
             print(error_message)
+
+def evaluate_round(
+    player_number,
+    bet_amount,
+    computer_number
+):
+
+    equal_check = (player_number == computer_number)
+
+    if equal_check:
+
+        gain_exact = bet_amount * EXACT_PAYOUT
+        net_gain = gain_exact
+        outcome = "Exact Match! 숫자까지 맞추셨습니다."
+
+    else:
+
+        player_parity = player_number % 2
+        computer_parity = computer_number % 2
+        parity_match = (player_parity == computer_parity)
+
+        if parity_match:
+
+            gain_parity = bet_amount * PARITY_PAYOUT
+            net_gain = gain_parity
+            outcome = "Parity Match! 짝/홀만 맞추셨습니다."
+
+        else:
+
+            loss_amount = -bet_amount
+            net_gain = loss_amount
+            outcome = "패배했습니다. 짝/홀 모두 틀리셨습니다."
+
+    return outcome, net_gain
