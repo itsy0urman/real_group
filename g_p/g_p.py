@@ -4,61 +4,40 @@ MAX_NUMBER = 50
 PARITY_PAYOUT = 1
 EXACT_PAYOUT = 50
 
-def get_player_choice(
-    balance
-):
+import math
 
+def get_player_choice(balance):
     while True:
-
         try:
-
             # 잔액 표시
-            print("현재 잔액: ")
-            print(f"{balance:.0f}")
-            print("원")
+            print(f"현재 잔액: {balance:.0f}원")
 
             # 숫자 입력
-            prompt_number_start = "숫자를 선택하세요 ("
-            prompt_number_mid1 = str(MIN_NUMBER)
-            prompt_number_mid2 = "~"
-            prompt_number_mid3 = str(MAX_NUMBER)
-            prompt_number_end = "): "
-            full_number_prompt = (
-                prompt_number_start
-                + prompt_number_mid1
-                + prompt_number_mid2
-                + prompt_number_mid3
-                + prompt_number_end
-            )
-            choice_input = input(full_number_prompt)
-            choice = int(choice_input)
-
-            if choice < MIN_NUMBER:
-                raise ValueError
-            if choice > MAX_NUMBER:
+            choice = int(input(f"숫자를 선택하세요 ({MIN_NUMBER}~{MAX_NUMBER}): "))
+            if choice < MIN_NUMBER or choice > MAX_NUMBER:
                 raise ValueError
 
             # 베팅 금액 입력
-            bet_prompt = "베팅할 금액을 입력하세요 (숫자만 입력): "
-            bet_input = input(bet_prompt)
-            bet = float(bet_input)
+            bet_input = input("베팅할 금액을 입력하세요 (숫자만 또는 all in/half/quarter): ").strip().lower()
 
-            if bet <= 0:
-                raise ValueError
-            if bet > balance:
+            # special keywords 처리
+            if bet_input in ("all in", "all-in", "allin"):
+                bet = balance
+            elif bet_input == "half":
+                bet = balance // 2
+            elif bet_input == "quarter":
+                bet = balance // 4
+            else:
+                bet = float(bet_input)
+
+            # 유효성 검사
+            if bet <= 0 or bet > balance:
                 raise ValueError
 
             return choice, bet
 
         except ValueError:
-
-            msg1 = str(MIN_NUMBER)
-            msg2 = "~"
-            msg3 = str(MAX_NUMBER)
-            msg4 = " 사이의 숫자와 "
-            msg5 = "잔액 이하의 양수 금액을 입력하세요.\n"
-            error_message = msg1 + msg2 + msg3 + msg4 + msg5
-            print(error_message)
+            print(f"{MIN_NUMBER}~{MAX_NUMBER} 사이의 숫자와, 0초과 현재 잔액({balance:.0f}원) 이하의 금액을 입력하세요.\n")
 
 def evaluate_round(
     player_number,
